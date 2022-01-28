@@ -1,0 +1,183 @@
+// SPDX-License-Identifier: MIT
+pragma solidity >=0.7.0 <0.9.0;
+
+contract Monkeyjpg {
+    mapping(string => address) internal transaction_map;
+    mapping(string => address) internal wallet_map;
+
+    // Returns wallet, create wallet if does not exist
+    function create_Wallet(string calldata _wallet_id) internal returns(address) {
+        if (wallet_exist(_wallet_id)) {
+            return wallet_map[_wallet_id];
+        } else {
+            wallet_map[_wallet_id] = address(new Wallet(_wallet_id));
+            return wallet_map[_wallet_id];
+        }
+    }
+
+    // Returns transaction, create transaction if does not exist
+    function create_Transaction(string calldata _transaction_hash, string calldata _from_wallet_id, string calldata _to_wallet_id) internal returns(address){
+        if (transaction_exist(_transaction_hash)) {
+            return address(transaction_map[_transaction_hash]);
+        } else {
+            address to_wallet_address = create_Wallet(_to_wallet_id);
+            address from_wallet_address = create_Wallet(_from_wallet_id);
+            transaction_map[_transaction_hash] = address(new Transaction(to_wallet_address, from_wallet_address, _transaction_hash));
+            return transaction_map[_transaction_hash];
+        }
+    }
+
+    function get_Transaction(string calldata _transaction_hash) internal returns(address) {
+        return address(transaction_map[_transaction_hash]);
+    }
+
+
+
+
+    // Returns if wallet exist
+    function wallet_exist(string calldata _wallet_id) internal returns(bool) {
+        return !(wallet_map[_wallet_id] == address(0x0));
+    }
+
+    // Returns if transaction exist
+    function transaction_exist(string calldata _transaction_hash) internal returns(bool) {
+        return !(transaction_map[_transaction_hash] == address(0x0));
+    }
+
+    // Returns sus status of wallet if exist, false otherwise
+    function query_Wallet(string calldata _wallet_id) public returns (bool, uint256, uint256) {
+        if (wallet_exist(_wallet_id)) {
+            Wallet w =  Wallet(create_Wallet(_wallet_id));
+            return (w.is_sus(), w.get_good_count(), w.get_sus_count());
+        } else {
+            return (false, 0, 0);
+        }
+    }
+
+    function query_Transaction(string calldata _transaction_hash) public returns (bool, uint256, uint256) {
+        if (transaction_exist(_transaction_hash)) {
+            Transaction t = Transaction(get_Transaction((_transaction_hash)));
+            return (t.is_sus(), t.get_good_count(), t.get_sus_count());
+        } else {
+            return (false, 0, 0);
+        }
+    }
+
+    // Validation
+    function validate_Wallet(string calldata _wallet_id, bool is_sus) public {
+        Wallet w = Wallet(create_Wallet(_wallet_id));
+
+        if (is_sus) {
+            w.verify_sus();
+        } else {
+            w.verify_good();
+        }
+    }
+
+    function validate_Transaction (string calldata _transaction_hash, string calldata _from_wallet_id, string calldata _to_wallet_id, bool is_sus) public {
+        Transaction t = Transaction(create_Transaction(_transaction_hash, _from_wallet_id, _to_wallet_id));
+
+        //bool is_result_sus = true;
+        if (is_sus) {
+            t.verify_sus();
+        } else {
+            t.verify_good();
+        }
+    }
+
+}
+
+contract Wallet {
+    string wallet_id;
+    uint256 sus_count;
+    uint256 good_count;
+    bool sus_status;
+
+    constructor(string memory _wallet_id) {
+        wallet_id = _wallet_id;
+        sus_count = 0;
+        good_count = 0;
+        sus_status = false;
+    }
+
+    function verify_good() external {
+        good_count++;
+        update_sus_status();
+    }
+
+    function verify_sus() external {
+        sus_count++;
+        update_sus_status();
+    }
+
+    function update_sus_status() private {
+        sus_status = ((sus_count * 2) > (sus_count + good_count));
+    }
+
+    function is_sus() external returns(bool) {
+        return sus_status;
+    }
+
+    function get_good_count() external returns(uint256) {
+        return good_count;
+    }
+
+    function get_sus_count() external returns(uint256) {
+        return sus_count;
+    }
+
+
+    function get_Wallet_id() external returns(string memory) {
+        return wallet_id;
+    }
+}
+
+contract Transaction {
+    address from_wallet;
+    address to_wallet;
+    string transaction_hash;
+    uint256 sus_count;
+    uint256 good_count;
+    bool sus_status;
+
+
+    constructor(address _from_wallet, address _to_wallet, string memory _transaction_hash) {
+        from_wallet = _from_wallet;
+        to_wallet = _to_wallet;
+        transaction_hash = _transaction_hash;
+        sus_count = 0;
+        good_count = 0;
+        sus_status = false;
+    }
+
+    function verify_good() external {
+        good_count++;
+        update_sus_status();
+    }
+
+    function verify_sus() external {
+        sus_count++;
+        update_sus_status();
+    }
+
+    function update_sus_status() private {
+
+        if (((sus_count * 2) > (sus_count + good_count)) || Wallet(from_wallet).is_sus() || Wallet(to_wallet).is_sus()) {
+            sus_status = true;
+        } else {
+            sus_status = false;
+        }
+    }
+
+    function get_good_count() external returns(uint256) {
+        return good_count;
+    }
+
+    function get_sus_count() external returns(uint256) {
+        return sus_count;
+    }
+
+    function is_sus() public returns(bool) {
+        return sus_status;
+    }
+}
