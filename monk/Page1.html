@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scaled=1.0" />
+    <title>Monkey.jpg</title>
+    <style>
+      .button {
+        background-color: #4caf50;
+        border: none;
+        color: white;
+        padding: 15px 32px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+
+  <body
+    style="
+      background-image: linear-gradient(
+        to right,
+        #69b3c1,
+        #9eddef4b,
+        #9eddef4b,
+        #69b3c1
+      );
+    "
+  >
+    <h1 style="font-family: Papyrus; color: #325d79"><b>Monkey.jpg</b></h1>
+    <img
+      src="https://cdn-icons-png.flaticon.com/512/194/194065.png"
+      alt=""
+      width="130px"
+      class="center"
+      )
+    />
+    <br />
+
+    <br />
+    <section class="buttons">
+      <link rel="stylesheet" href="Page1.css" />
+      <button onclick = "query_Wallet(document.getElementById('qWallet').value)"
+        class="Query Wallet"
+        style="
+          background-color: #fbf1b9;
+          padding: 4px 8px;
+          font-size: 14px;
+          border-radius: 10px;
+        "
+      >
+        Query Wallet
+      </button >
+
+      <input type="text" id="qWallet" required="" placeholder="Enter Wallet" />
+      <br /><br />
+
+      <button onclick="validateWallet(document.getElementById('vWallet').value)"
+        class="Validate Wallet"
+        style="
+          background-color: #fbf1b9;
+          padding: 4px 8px;
+          font-size: 14px;
+          border-radius: 10px;
+        "
+      >
+        Validate Wallet
+      </button>
+      <input type="text" id="vWallet" required="" placeholder="Enter Wallet" />
+      <br /><br />
+
+      <button onclick="query_Transaction(document.getElementById('qTrans').value)"
+        class="Query Transaction"
+        style="
+          background-color: #fbf1b9;
+          padding: 4px 8px;
+          font-size: 14px;
+          border-radius: 10px;
+        "
+      >
+        Query Transaction
+      </button>
+      <input
+        type="text"
+        id="qTrans"
+        required=""
+        placeholder="Enter Transaction"
+      />
+      <br /><br />
+
+      <button onclick="validateTransaction(document.getElementById('vTrans').value)"
+        class="Validate Transaction"
+        style="
+          background-color: #fbf1b9;
+          padding: 4px 8px;
+          font-size: 14px;
+          border-radius: 10px;
+        "
+      >
+        Validate Transaction
+      </button>
+      <input
+        type="text"
+        id="vTrans"
+        required=""
+        placeholder="Enter Transaction"
+      />
+      
+      <br /><br />
+      </section>
+      <script src="MonkeyAnalysis.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+      <script src="js/web3.min.js"></script>
+      <script>
+        var provider = 'https://lively-empty-violet.quiknode.pro/b5d5b4e0b70ad8798aa0476f18577af2ff84e2bb/'
+        var web3Provider = new Web3.providers.HttpProvider(provider);
+        var web4 = new Web3(web3Provider);
+        
+        
+        
+        async function loadWeb3() {
+            if (window.ethereum) {
+                window.web3 = new Web3(window.ethereum);
+                window.ethereum.enable();
+            }
+
+        }
+        async function load() {
+            await loadWeb3();
+        }
+
+        load();
+
+
+
+        async function loadContract() {
+            return await new web3.eth.Contract([
+                {
+                    "inputs": [
+                        {
+                            "internalType": "string",
+                            "name": "_transaction_hash",
+                            "type": "string"
+                        }
+                    ],
+                    "name": "query_Transaction",
+                    "outputs": [
+                        {
+                            "internalType": "bool",
+                            "name": "",
+                            "type": "bool"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "",
+                            "type": "uint256"
+                        }
+                    ],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "string",
+                            "name": "_wallet_id",
+                            "type": "string"
+                        }
+                    ],
+                    "name": "query_Wallet",
+                    "outputs": [
+                        {
+                            "internalType": "bool",
+                            "name": "",
+                            "type": "bool"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "",
+                            "type": "uint256"
+                        }
+                    ],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "string",
+                            "name": "_transaction_hash",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "_from_wallet_id",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "_to_wallet_id",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "bool",
+                            "name": "is_sus",
+                            "type": "bool"
+                        }
+                    ],
+                    "name": "validate_Transaction",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                },
+                {
+                    "inputs": [
+                        {
+                            "internalType": "string",
+                            "name": "_wallet_id",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "bool",
+                            "name": "is_sus",
+                            "type": "bool"
+                        }
+                    ],
+                    "name": "validate_Wallet",
+                    "outputs": [],
+                    "stateMutability": "nonpayable",
+                    "type": "function"
+                }
+            ], '0x563fCA27B848FB4496e9CDeCD2a94e1d4bca6BE9');
+        }
+        
+        
+        async function query_Transaction(transactionHash){
+            window.contract = await loadContract();
+            let account1 = '0x6eC43863C4f275Af370CD48a124eD16bB90C5818'
+            let result = await window.contract.methods.query_Transaction(transactionHash).call();
+            console.log(result);
+        }
+        //printNumber();
+
+        async function query_Wallet(walletID) {
+          console.log("asdf");
+            window.contract = await loadContract();
+            let account1 = '0x6eC43863C4f275Af370CD48a124eD16bB90C5818'
+            let result = await window.contract.methods.query_Wallet(walletID).call();
+            console.log(result);
+        }
+
+
+        async function validateWallet(walletID) {
+            window.contract = await loadContract();
+            let result = await analyseWallet(walletID);
+            //run Brian's code here
+            let account1 = '0x6eC43863C4f275Af370CD48a124eD16bB90C5818'
+            const newNum = await window.contract.methods.validate_Wallet(walletID,result).send({ from: account1 })
+        }
+
+        async function validateTransaction(transactionID, sendingWallet, receivingWallet) {
+          window.contract = await loadContract();
+          let txn = await generateTransaction(transactionID);
+          let result = await analyseTransaction(transactionID);
+          let account1 = '0x6eC43863C4f275Af370CD48a124eD16bB90C5818'
+          const newNum = await window.contract.methods.validate_Transaction(transactionID,txn[0],txn[1],result).send({ from: account1 });
+        }
+
+        // async function getdata(transactionHash){//code to get top transactions of latest block
+        
+        //     let block = await web4.eth.getBlock("latest");
+        //     //console.log(block.number);
+        //     // for (var i = 0; i < 5;i++) {
+        //     //     transactionHash = block.transactions[i];
+        //     //     var transaction = await web4.eth.getTransaction(transactionHash);
+        //     //     gas = transaction.gas
+        //     //     from = transaction.from
+        //     //     to = transaction.to
+        //     //     value = transaction.value
+        //     //     $('tbody').append("<tr><td>" + transactionHash + "</td><td>" + from + "</td><td>" + to + "</td><td>" + value + "</td><td>" + block.timestamp + " " + new Date(block.timestamp * 1000).toGMTString())
+        //     // }
+        //     var transaction = await web4.eth.getTransaction(transactionHash);
+        //     console.log(transaction.gas);
+        //     gas = transaction.gas;
+        //     from = transaction.from;
+        //     to = transaction.to;
+        //     value = transaction.value;
+        //     $('tbody').append("<tr><td>" + transactionHash + "</td><td>" + from + "</td><td>" + to + "</td><td>" + value + "</td><td>" + block.timestamp + " " + new Date(block.timestamp * 1000).toGMTString())
+        //     return transaction.from;
+        // }
+        // var transactionHash = '0x1b061cc18c3f7609157b61f860a540321cf6ac23fd2d831b4ea91922d6c209b4'
+        // getdata(transactionHash);
+        
+        
+        
+        // async function getTransactionsByAccount(myaccount, startBlockNumber, endBlockNumber) {//code to get transactions by account number 
+
+        //     if (endBlockNumber == null) {
+        //         endBlock = await web4.eth.getBlock("latest");
+        //         endBlockNumber = endBlock.number;
+        //         console.log("Using endBlockNumber: " + endBlockNumber);
+        //     }
+        //     if (startBlockNumber == null) {
+        //         startBlockNumber = endBlockNumber - 100;
+        //         console.log("Using startBlockNumber: " + startBlockNumber);
+        //     }
+        //     console.log("Searching for transactions to/from account \"" + myaccount + "\" within blocks "  + startBlockNumber + " and " + endBlockNumber);
+
+        //     for (var i = startBlockNumber; i <= endBlockNumber; i++) {
+                
+        //         console.log("Searching block " + i);
+                
+        //         var block = await web4.eth.getBlock(i, true);
+        //         if (block != null && block.transactions != null) {
+        //             for (var x = 0; x < block.transactions.length;x++){
+        //                 var e = block.transactions[x]
+        //                 if (myaccount == "*" || myaccount == block.transactions[x].from || myaccount == e.to) {
+        //                 console.log("true")
+        //                 console.log("  tx hash          : " + e.hash + "\n"
+        //                 + "   nonce           : " + e.nonce + "\n"
+        //                 + "   blockHash       : " + e.blockHash + "\n"
+        //                 + "   blockNumber     : " + e.blockNumber + "\n"
+        //                 + "   transactionIndex: " + e.transactionIndex + "\n"
+        //                 + "   from            : " + e.from + "\n" 
+        //                 + "   to              : " + e.to + "\n"
+        //                 + "   value           : " + e.value + "\n"
+        //                 + "   time            : " + block.timestamp + " " + new Date(block.timestamp * 1000).toGMTString() + "\n"
+        //                 + "   gasPrice        : " + e.gasPrice + "\n"
+        //                 + "   gas             : " + e.gas + "\n"
+        //                 + "   input           : " + e.input);
+                        
+        //             }
+        //         }/*
+        //         block.transactions.forEach( function(e) {
+        //             if (myaccount == "*" || myaccount == e.from || myaccount == e.to) {
+        //                 console.log("true")
+        //                 console.log("  tx hash          : " + e.hash + "\n"
+        //                 + "   nonce           : " + e.nonce + "\n"
+        //                 + "   blockHash       : " + e.blockHash + "\n"
+        //                 + "   blockNumber     : " + e.blockNumber + "\n"
+        //                 + "   transactionIndex: " + e.transactionIndex + "\n"
+        //                 + "   from            : " + e.from + "\n" 
+        //                 + "   to              : " + e.to + "\n"
+        //                 + "   value           : " + e.value + "\n"
+        //                 + "   time            : " + block.timestamp + " " + new Date(block.timestamp * 1000).toGMTString() + "\n"
+        //                 + "   gasPrice        : " + e.gasPrice + "\n"
+        //                 + "   gas             : " + e.gas + "\n"
+        //                 + "   input           : " + e.input);
+        //                 return e.to;
+        //             }
+        //         })*/
+                
+        //         }
+        //     }
+        //     console.log("none");
+        // }
+
+
+
+        // async function getRecentAccount(){
+        //     let transaction = await web4.eth.getTransaction('0x1b061cc18c3f7609157b61f860a540321cf6ac23fd2d831b4ea91922d6c209b4');
+        //     account = transaction.from;
+        //     block = transaction.blockNumber;
+        //     getTransactionsByAccount('account',block-50,block)
+        //     return account
+        // }
+        // transactionHash = '';
+        // getRecentAccount()
+        //changeNumber();
+        
+        
+        /*async function traceCycle(account){
+            console.log("account" + account)
+            var acc = await getTransactionsByAccount(0xEA674fdDe714fd979de3EdF0F56AA9716B898ec8);
+            var counter = 0
+            while (account != acc && counter < 10) {
+                console.log("acc"+acc)
+                acc = await getTransactionsByAccount(acc);
+                console.log(acc)
+                counter = counter + 1;
+                console.log(counter)
+            }
+            console.log("cycle detected")
+        }
+        traceCycle(0xEA674fdDe714fd979de3EdF0F56AA9716B898ec8)*/
+        
+        // transactions = getdata();
+        // transactionHash = transactions[0];
+        // async function getTransaction(){
+        //     let transaction = await web4.eth.getTransaction(transactionHash);
+        //     console.log(transaction.from);
+        //     return transaction.from;
+        // }
+        // console.log(getTransaction());
+
+
+    </script>
+</body>
+</html>
